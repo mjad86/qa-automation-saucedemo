@@ -1,5 +1,7 @@
 import pytest
+
 from pages.login_page import LoginPage
+
 
 def test_login_with_valid_user(driver):
     login_page = LoginPage(driver)
