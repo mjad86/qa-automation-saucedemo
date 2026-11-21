@@ -1,5 +1,7 @@
 # QA Automation: Sauce Demo
 
+![Tests](https://github.com/mjad86/qa-automation-saucedemo/actions/workflows/tests.yml/badge.svg)
+
 UI test automation framework built with **Python, Pytest and Selenium**, following the **Page Object Model** pattern. It automates the login flow of the [Swag Labs demo store](https://www.saucedemo.com/).
 
 This project is the automation counterpart of my manual QA work: [qa-portfolio-saucedemo](https://github.com/mjad86/qa-portfolio-saucedemo).
@@ -84,7 +86,7 @@ pytest -v -k "valid_user"
 - [x] Inventory and cart flow (add to cart, verify counter)
 - [x] Checkout flow
 - [x] HTML test reports
-- [ ] Continuous integration with GitHub Actions
+- [x] Continuous integration with GitHub Actions
 - [ ] API tests (Postman and Python `requests`)
 
 ## Author
