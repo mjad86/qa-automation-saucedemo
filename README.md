@@ -83,7 +83,7 @@ pytest -v -k "valid_user"
 - [x] Parametrized negative scenarios
 - [x] Inventory and cart flow (add to cart, verify counter)
 - [ ] Checkout flow
-- [ ] HTML test reports
+- [x] HTML test reports
 - [ ] Continuous integration with GitHub Actions
 - [ ] API tests (Postman and Python `requests`)
 
