@@ -1,0 +1,43 @@
+name: Tests
+
+# Cuándo se ejecuta: en cada push y en cada pull request a main
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Descargar el código del repositorio al servidor
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # 2. Instalar Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # 3. Instalar las dependencias del proyecto
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # 4. Ejecutar las pruebas en modo headless y generar el reporte
+      - name: Run tests
+        env:
+          HEADLESS: "1"
+        run: pytest -v --html=reports/report.html --self-contained-html
+
+      # 5. Guardar reporte y capturas, aunque las pruebas hayan fallado
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            reports/
+            screenshots/
