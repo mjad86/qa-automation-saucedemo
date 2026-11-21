@@ -81,9 +81,9 @@ pytest -v -k "valid_user"
 
 - [x] Login tests with Page Object Model
 - [x] Parametrized negative scenarios
-- [ ] Inventory and cart flow (add to cart, verify counter)
-- [ ] Checkout flow
-- [ ] HTML test reports
+- [x] Inventory and cart flow (add to cart, verify counter)
+- [x] Checkout flow
+- [x] HTML test reports
 - [ ] Continuous integration with GitHub Actions
 - [ ] API tests (Postman and Python `requests`)
 
