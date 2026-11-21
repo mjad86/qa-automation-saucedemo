@@ -87,7 +87,7 @@ pytest -v -k "valid_user"
 - [x] Checkout flow
 - [x] HTML test reports
 - [x] Continuous integration with GitHub Actions
-- [ ] API tests (Postman and Python `requests`)
+- [x] API tests (Postman and Python `requests`)
 
 ## Author
 
