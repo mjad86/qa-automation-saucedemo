@@ -10,7 +10,6 @@ from selenium import webdriver
 from pages.login_page import LoginPage
 from pages.inventory_page import InventoryPage
 
-
 @pytest.fixture
 def driver():
     options = webdriver.ChromeOptions()
