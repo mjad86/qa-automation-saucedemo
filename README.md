@@ -89,6 +89,27 @@ pytest -v -k "valid_user"
 - [x] Continuous integration with GitHub Actions
 - [x] API tests (Postman and Python `requests`)
 
+## API tests (requests + Pytest)
+
+API tests against the public JSONPlaceholder REST API, kept in `tests/api/`.
+
+| Test | Method | What it validates |
+|------|--------|-------------------|
+| test_get_single_post | GET | Status 200, response time, exact fields |
+| test_get_all_posts | GET | List of 100 posts, structure of each item |
+| test_create_post | POST | Status 201, response echoes sent data |
+| test_update_post | PUT | Status 200, updated values returned |
+| test_delete_post | DELETE | Status 200, empty body |
+| test_get_non_existent_post | GET | Negative case: status 404 |
+
+### How to run
+```
+pip install -r requirements.txt
+pytest tests/api -v
+```
+
+JSONPlaceholder simulates write operations (POST, PUT, DELETE) and does not persist data.
+
 ## Author
 
 **Mauricio**: data analyst with a SQL background, moving into QA and test automation.
