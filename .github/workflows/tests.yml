@@ -1,43 +1,63 @@
 name: Tests
 
-# Cuándo se ejecuta: en cada push y en cada pull request a main
+# When the workflow runs: on every push to main, on pull requests,
+# and manually from the Actions tab (workflow_dispatch)
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+  workflow_dispatch:
+
+# The workflow only needs to read the repository
+permissions:
+  contents: read
 
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
+    # Safety net: a stuck run is cancelled instead of consuming minutes
+    timeout-minutes: 15
 
     steps:
-      # 1. Descargar el código del repositorio al servidor
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - name: Check out the code
+        uses: actions/checkout@v6
 
-      # 2. Instalar Python
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: "3.15.2"
+          cache: pip
 
-      # 3. Instalar las dependencias del proyecto
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # 4. Ejecutar las pruebas en modo headless y generar el reporte
-      - name: Run tests
+      # Playwright downloads its own browser; --with-deps also installs the
+      # Linux libraries that browser needs
+      - name: Install Playwright browser
+        run: playwright install --with-deps chromium
+
+      - name: API tests
+        run: pytest tests/api -v --html=reports/api_report.html --self-contained-html
+
+      # DELICATE PART: !cancelled() makes these steps run even if the previous
+      # one failed, so one run shows the result of all three groups
+      - name: Playwright tests
+        if: ${{ !cancelled() }}
+        run: pytest tests/playwright_tests -v --html=reports/playwright_report.html --self-contained-html
+
+      - name: Selenium tests
+        if: ${{ !cancelled() }}
         env:
           HEADLESS: "1"
-        run: pytest -v --html=reports/report.html --self-contained-html
+        run: pytest tests --ignore=tests/api --ignore=tests/playwright_tests -v --html=reports/selenium_report.html --self-contained-html
 
-      # 5. Guardar reporte y capturas, aunque las pruebas hayan fallado
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
+      # Keep the HTML reports and failure screenshots so they can be downloaded
+      - name: Upload reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
         with:
-          name: test-results
+          name: test-reports
           path: |
             reports/
             screenshots/
+          if-no-files-found: ignore
