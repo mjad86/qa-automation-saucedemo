@@ -110,6 +110,46 @@ pytest tests/api -v
 
 JSONPlaceholder simulates write operations (POST, PUT, DELETE) and does not persist data.
 
+## Selenium vs Playwright
+
+The same five cart scenarios are automated with both tools
+(`tests/test_cart.py` and `tests/playwright_tests/test_cart_playwright.py`).
+These are my observations from building both.
+
+### Waiting for the page
+In Selenium, clicking the cart link does not mean the page has changed. My cart tests
+were flaky because the code read the product list while the inventory page was still
+loaded (6 products instead of 2), and sometimes raised `StaleElementReferenceException`.
+The fix was explicit waits in `open_cart`: wait for the old element to go stale and
+for the URL to contain `cart.html`.
+
+In Playwright the same step is a click plus one assertion on the URL.
+`expect(...)` retries until the condition is true or times out, and locators are
+resolved again on every action, so stale element errors do not happen.
+
+### Locators
+The red T-shirt has an id with dots and parentheses. With Selenium `By.ID` this is
+not a problem, but in a Playwright CSS selector `#add-to-cart-test.allthethings()...`
+breaks, so I used `[id="..."]` instead.
+
+### Failure information
+Selenium: I added `message=` to the waits and a hook in `conftest.py` that saves a
+screenshot on failure. Playwright's assertion errors already show what was expected,
+what was found and the retries.
+
+### Run time (5 cart tests, headless, 3 runs, my machine)
+| Tool | Run 1 | Run 2 | Run 3 | Average |
+|------|-------|-------|-------|---------|
+| Selenium + Pytest | [65.33s] | [64.27s] | [60.45s] | [63.35s] |
+| Playwright + Pytest | [8.08s] | [6.69s] | [5.92s] | [6.89s] |
+
+Small sample on a single machine, including browser startup. Not a benchmark.
+
+### Takeaway
+Both tools work. Selenium needed more explicit synchronization code from me;
+Playwright handled most of it by default. Knowing the explicit-wait approach
+helped me understand what Playwright does automatically.
+
 ## Author
 
 **Mauricio**: data analyst with a SQL background, moving into QA and test automation.
